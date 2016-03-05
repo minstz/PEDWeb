@@ -23,6 +23,10 @@ app.get('/', function(req, res, next) {
 
 });
 
+app.get('/content', function(req, res, next) { 
+	res.sendFile('content.html', { root : __dirname}); 
+});
+
 app.use('/api', peerServer);
 
 app.get('/*', function(req, res, next) { 
