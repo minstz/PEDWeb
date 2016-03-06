@@ -29,10 +29,6 @@ app.get('/', function(req, res, next) {
 
 });
 
-app.get('/content', function(req, res, next) { 
-	res.sendFile('content.html', { root : __dirname}); 
-});
-
 app.get('/static/*', function(req, res, next) { 
 	// console.log("staticstaticstaticstaticstaticstaticstaticstatic");
 	res.sendFile(req.url.slice(1,req.url.length), { root : __dirname}); 
@@ -70,9 +66,11 @@ app.get('/*_metadata', function(req, res, next) {
 
 app.get('/*', function(req, res, next) { 
 	// console.log("ASDFGHJKL");
+	console.log(req.url);
 	if (req.url in page_hashes) {
+		page_hashes[req.url]
 		// sendjson = {'peer_id': peers[0], 'content_hash': page_hashes[req.url]};
-		res.sendFile(JSON.stringify());
+		res.sendFile(pages[req.url],  { root : __dirname});
 	} else {
 		res.send('404 page not found');
 	}
