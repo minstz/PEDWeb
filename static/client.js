@@ -1,9 +1,7 @@
-$(document).ready(function() {
+function setUpClient(requestURL) {
 	
 	var peerID = "";
 	var hash = 0;
-
-	var requestURL = '/content';
 
 	var peer = new Peer( {host: 'localhost', port: 9000, path: '/api'});
 
@@ -14,7 +12,7 @@ $(document).ready(function() {
 		console.log('My peer ID is: ' + id);
 
 		//Get peerID and hash from server
-		console.log('GETting /' + id + '/content_metadata' )
+		console.log('GETting /' + id + requestURL + '_metadata' )
 		$.ajax({
 			url: '/' + id + requestURL + '_metadata',
 			// data: id,
@@ -36,6 +34,7 @@ $(document).ready(function() {
 				async: false,
 				success: function(html) {
 					console.log("Got the html");
+					document.body.innerHTML = "";
 					document.write(html);
 				}
 			});
@@ -66,11 +65,12 @@ $(document).ready(function() {
 		    	console.log("Hashes do not match");
 
 					$.ajax({
-						url: '/' + peerID + requestURL + '/error',
+						url: '/error' + '/' + peerID + requestURL,
 						dataType: 'html',
 						async: false,
 						success: function(html) {
 							console.log("Got the html");
+							document.body.innerHTML = "";
 							document.write(html);
 						}
 					});
@@ -95,4 +95,4 @@ $(document).ready(function() {
 
 	});
 
-});
+}

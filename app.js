@@ -5,7 +5,7 @@ var sha256 = require('js-sha256');
 var fs = require('fs');
 
 // pages = [{'route': '/content', 'file': 'content.html'}]
-pages = {'/content': 'content.html'}
+pages = {'/content': 'content.html', '/test': 'index_new.html'}
 
 
 // Peer format: {'id': 'peerID', 'currentPage': '/content', 'pageHash': theirhash}
