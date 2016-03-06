@@ -134,7 +134,7 @@ peerServer.on('connection', function(id) {
 
 peerServer.on('disconnect', function(id) { 
 	// Remove client from list
-
+	console.log("disconnected id: " + id);
 	remove_peer(id);
 
 });
