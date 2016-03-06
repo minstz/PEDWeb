@@ -3,6 +3,8 @@ var app = express();
 var ExpressPeerServer = require('peer').ExpressPeerServer;
 var sha256 = require('js-sha256');
 
+// pages = [{'route': '/content', "file": "content.html"}]
+
 var peers = [];
 var page_hashes = {'/hello': sha256('hello')}
 
@@ -26,7 +28,7 @@ app.get('/', function(req, res, next) {
 });
 
 app.get('/content', function(req, res, next) { 
-	// console.log("contentcontentcontentcontentcontent");
+	console.log("contentcontentcontentcontentcontent");
 	res.sendFile('content.html', { root : __dirname}); 
 });
 
@@ -39,9 +41,9 @@ app.get('/static/*', function(req, res, next) {
 
 
 app.get('/*', function(req, res, next) { 
-	console.log("ASDFGHJKL");
+	// console.log("ASDFGHJKL");
 	if (req.url in page_hashes) {
-		sendjson = {'peer_id': 'peer_id', 'content_hash': page_hashes[req.url]};
+		sendjson = {'peer_id': peers[0], 'content_hash': page_hashes[req.url]};
 		res.send(JSON.stringify(sendjson));
 	} else {
 		res.send('404 page not found');

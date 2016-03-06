@@ -14,7 +14,7 @@ $(document).ready(function() {
 		//Get peerID and hash from server
 		$.ajax({
 			url: '/hello',
-			data: id,
+			// data: id,
 			dataType: 'json',
 			async: false,
 			success: function(json) {
@@ -26,12 +26,13 @@ $(document).ready(function() {
 
 		//This means we are currently the only active connection on the server
 		//We will now get the content directly from server
-		if (peerID == id) {
+		if (peerID == id || peerID == "peer_id") {
 			$.ajax({
 				url: '/content',
 				dataType: 'html',
 				async: false,
 				success: function(html) {
+					console.log("Got the html");
 					document.write(html);
 				}
 			});
@@ -40,20 +41,23 @@ $(document).ready(function() {
 		else {
 
 			//connect to the specified peer id given by server
-			var conn = peer.connect(peerID);
+			var connection = peer.connect(peerID);
 
 			//wait for data
-		  conn.on('data', function(data){
+		  connection.on('data', function(data){
 		    console.log("received from peer", data);
 
 		    //calculate hash
-		    var recievedHash = CryptoJS.SHA256(data);
+		    var recievedHash = sha256(data);
+
+		    console.log(recievedHash);
 
 		    //compare hash to hash supplied by server
 		    //if not equal, close connection, send error to server, and get new peer
 		    if (hash == recievedHash) {
 			    //write data (html) to the DOM
-			    document.write(data);
+			    // document.write(data);
+			    document.write("<h1>YOU GOT SERVED!!!!</h1>");
 		    }
 		    else {
 		    	console.log("Hashes do not match");
@@ -61,13 +65,20 @@ $(document).ready(function() {
 		    }
 
 		  });
-		 }
+		}
 	});
 
 	//On connection
 	peer.on('connection', function(conn) {
-		//Send data (html) to new peer
-		conn.send(window.document);
+		conn.on('open',function() {
+			var data = document.documentElement.outerHTML;
+			console.log("sending html");
+			//Send data (html) to new peer
+			conn.send(data);
+			console.log("SENT");
+			console.log(data);
+		});
+
 
 	});
 
