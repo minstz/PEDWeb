@@ -2,8 +2,10 @@ var express = require('express');
 var app = express();
 var ExpressPeerServer = require('peer').ExpressPeerServer;
 var sha256 = require('js-sha256');
+var fs = require('fs');
 
-// pages = [{'route': '/content', "file": "content.html"}]
+// pages = [{'route': '/content', 'file': 'content.html'}]
+pages = {'/content': 'content.html'}
 
 var peers = [];
 var page_hashes = {'/hello': sha256('hello')}
@@ -28,7 +30,6 @@ app.get('/', function(req, res, next) {
 });
 
 app.get('/content', function(req, res, next) { 
-	console.log("contentcontentcontentcontentcontent");
 	res.sendFile('content.html', { root : __dirname}); 
 });
 
@@ -37,14 +38,41 @@ app.get('/static/*', function(req, res, next) {
 	res.sendFile(req.url.slice(1,req.url.length), { root : __dirname}); 
 });
 
+app.get('/*/*', function(req, res, next) {
+	url = req.url.split("/");
+	peer = url[1];
+	url = url.slice(2,url.length);
+	url = '/' + url.join('/');
+
+	if (req.url in page_hashes) {
+		sendjson = {'peer_id': 'peer_id', 'content_hash': page_hashes[url]};
+		res.send(JSON.stringify(sendjson));
+	} else {
+		res.send('404 page not found: ' + url);
+	}
+});
+
+app.get('/*_metadata', function(req, res, next) { 
+	// console.log("ASDFGHJKL");
+	url = req.url.slice(0, req.url.length - 9)
+	console.log(url)
+	if (url in page_hashes) {
+		sendjson = {'peer_id': peers[0], 'content_hash': page_hashes[url]};
+		res.send(JSON.stringify(sendjson));
+	} else {
+		res.send('404 page not found');
+	}
+	
+	
+});
 
 
 
 app.get('/*', function(req, res, next) { 
 	// console.log("ASDFGHJKL");
 	if (req.url in page_hashes) {
-		sendjson = {'peer_id': peers[0], 'content_hash': page_hashes[req.url]};
-		res.send(JSON.stringify(sendjson));
+		// sendjson = {'peer_id': peers[0], 'content_hash': page_hashes[req.url]};
+		res.sendFile(JSON.stringify());
 	} else {
 		res.send('404 page not found');
 	}
@@ -72,3 +100,11 @@ peerServer.on('disconnect', function(id) {
 	console.log('Peers: ' + peers);
 
 });
+
+
+for (var route in pages) {
+	var filepath = pages[route]
+	var contents = fs.readFileSync(filepath, 'utf8');
+	page_hashes[route] = sha256(contents);
+}
+console.log(page_hashes);

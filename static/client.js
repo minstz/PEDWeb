@@ -13,7 +13,7 @@ $(document).ready(function() {
 
 		//Get peerID and hash from server
 		$.ajax({
-			url: '/hello',
+			url: '/content_metadata',
 			// data: id,
 			dataType: 'json',
 			async: false,
