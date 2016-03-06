@@ -3,6 +3,8 @@ $(document).ready(function() {
 	var peerID = "";
 	var hash = 0;
 
+	var requestURL = '/content';
+
 	var peer = new Peer( {host: 'localhost', port: 9000, path: '/api'});
 
 
@@ -14,7 +16,7 @@ $(document).ready(function() {
 		//Get peerID and hash from server
 		console.log('GETting /' + id + '/content_metadata' )
 		$.ajax({
-			url: '/' + id + '/content_metadata',
+			url: '/' + id + requestURL + '_metadata',
 			// data: id,
 			dataType: 'json',
 			async: false,
@@ -29,7 +31,7 @@ $(document).ready(function() {
 		//We will now get the content directly from server
 		if (peerID == id || peerID == "peer_id") {
 			$.ajax({
-				url: '/' + id + '/content',
+				url: '/' + id + requestURL,
 				dataType: 'html',
 				async: false,
 				success: function(html) {
@@ -62,6 +64,16 @@ $(document).ready(function() {
 		    }
 		    else {
 		    	console.log("Hashes do not match");
+
+					$.ajax({
+						url: '/' + peerID + requestURL + '/error',
+						dataType: 'html',
+						async: false,
+						success: function(html) {
+							console.log("Got the html");
+							document.write(html);
+						}
+					});
 
 		    }
 
