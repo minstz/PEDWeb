@@ -82,7 +82,7 @@ app.get('/*/*_metadata', function(req, res, next) {
 	if (url in page_hashes) {
 
 		// by default, tell them to get the content from themselves. This means get it from the server.
-		var to_connect_to = peer;
+		var to_connect_to = 'peer_id';
 
 		for (var i = 0; i < peers.length; i++) {
 			console.log(peers[i]['id']);
@@ -136,6 +136,7 @@ peerServer.on('disconnect', function(id) {
 	// Remove client from list
 	console.log("disconnected id: " + id);
 	remove_peer(id);
+	console.log("Disconnected!");
 
 });
 

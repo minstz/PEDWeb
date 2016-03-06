@@ -5,7 +5,12 @@
 		<script src="static/sha256.js"></script>
 		<script src="static/client.js"></script>
 		<script type="text/javascript">
+		$(document).ready(function() {
+			firstSetup = true;
+			peer = new Peer( {host: 'localhost', port: 9000, path: '/api'});
 			setUpClient('/content');
+		})
+			
 		</script>
 
 	</head>
