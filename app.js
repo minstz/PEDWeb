@@ -12,6 +12,17 @@ pages = {'/content': 'content.html'}
 var peers = [];
 var page_hashes = {}
 
+remove_peer = function(id) {
+	var temp = [];
+	for (var i = 0; i < peers.length; i++) {
+		if (peers[i]['id'] != id) {
+			temp.push(peers[i]);
+		}
+	}
+	peers = temp;
+}
+
+
 var server = app.listen(9000);
 
 var options = {
@@ -36,6 +47,30 @@ app.get('/static/*', function(req, res, next) {
 	res.sendFile(req.url.slice(1,req.url.length), { root : __dirname}); 
 });
 
+
+app.get('/error/*/*', function(req, res, next) {
+	// Got an error from the client. Drop the offending peer and send the file they want.
+	url = req.url.split('/');
+	// null = url[0];
+	// error = url[1];
+	peer_id = url[2];
+	request = '/' + url.slice(3, url.length).join('/')
+
+	if (request in pages) {
+		res.sendFile(pages[request], { root : __dirname});
+	} else {
+		res.send('404 page not found: ' + request)
+	}
+
+	// if()
+	for (var i = peers.length - 1; i > -1; i--) {
+		if (peers[i]['id'] == peer_id || peers[i]['pageHash'] != page_hashes[peers[i]['currentPage']]) {
+			// delete peers[i];
+			remove_peer(peer_id);
+		}
+	}
+});
+
 app.get('/*/*_metadata', function(req, res, next) { 
 	// console.log("ASDFGHJKL");
 	// url = req.url.slice(0, req.url.length - 9)
@@ -52,6 +87,8 @@ app.get('/*/*_metadata', function(req, res, next) {
 
 		for (var i = 0; i < peers.length; i++) {
 			console.log(peers[i]['id']);
+			// var minIndex = 0;
+			var min = 999;
 
 			if (peers[i]['id'] == peer) {
 				// Update where this person is.
@@ -60,7 +97,11 @@ app.get('/*/*_metadata', function(req, res, next) {
 			} else {
 				if (peers[i]['currentPage'] == url && peers[i]['pageHash'] == page_hashes[url]) {
 					// Found a peer we can use to get the content
-					to_connect_to = peers[i]['id'];
+					if (peers[i]['peopleConnected'].length < min) {
+						to_connect_to = peers[i]['id'];
+						min = peers[i]['peopleConnected'].length;
+					}
+					
 				}	
 			}
 		}
@@ -88,7 +129,7 @@ app.get('/*/*', function(req, res, next) {
 peerServer.on('connection', function(id) {
 	// send content if no others fully updated, otherwise send a client to connect to
 	console.log("Connected! id: " + id);
-	peers.push({'id': id, 'currentPage': undefined, 'pageHash': undefined});
+	peers.push({'id': id, 'currentPage': undefined, 'pageHash': undefined, 'peopleConnected': []});
 	console.log('Peers: ' + peers);
 });
 
