@@ -30,18 +30,22 @@ function setUpClient(requestURL) {
 		//This means we are currently the only active connection on the server
 		//We will now get the content directly from server
 		if (peerID == id || peerID == "peer_id") {
-			$.ajax({
-				url: '/' + id + requestURL,
-				dataType: 'html',
-				async: false,
-				success: function(html) {
-					console.log("Got the html ", html);
-					document.documentElement.innerHTML = html;
-					console.log(sha256(html));
-					console.log(html.length);
-					// document.write(html);
-				}
-			});
+			setTimeout(function() {
+				$.ajax({
+					url: '/' + id + requestURL,
+					dataType: 'html',
+					async: false,
+					success: function(html) {
+						console.log("Got the html ", html);
+						document.documentElement.innerHTML = html;
+						console.log(sha256(html));
+						console.log(html.length);
+						// document.write(html);
+					}
+				});
+
+			},2000); //simulate resource delay
+
 		}
 
 		else {
