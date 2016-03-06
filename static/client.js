@@ -1,7 +1,9 @@
 function setUpClient(requestURL) {
 	
+
 	var peerID = "";
 	var hash = 0;
+
 
 	var peer = new Peer( {host: 'localhost', port: 9000, path: '/api'});
 
@@ -33,11 +35,11 @@ function setUpClient(requestURL) {
 				dataType: 'html',
 				async: false,
 				success: function(html) {
-					console.log("Got the html");
-					document.body.innerHTML = "";
+					console.log("Got the html ", html);
+					document.documentElement.innerHTML = html;
 					console.log(sha256(html));
 					console.log(html.length);
-					document.write(html);
+					// document.write(html);
 				}
 			});
 		}
@@ -58,12 +60,12 @@ function setUpClient(requestURL) {
 
 		    //compare hash to hash supplied by server
 		    //if not equal, close connection, send error to server, and get new peer
-			console.log(data.length);
+				console.log(data.length);
 
 		    if (hash == recievedHash) {
 			    //write data (html) to the DOM
-			    // document.write(data);
-			    document.write("<h1>YOU GOT SERVED!!!!</h1>");
+			    document.documentElement.innerHTML = data;
+			    alert("This page was served by " + peerID);
 		    }
 		    else {
 		    	console.log("Hashes do not match");
@@ -73,9 +75,9 @@ function setUpClient(requestURL) {
 						dataType: 'html',
 						async: false,
 						success: function(html) {
-							console.log("Got the html");
-							document.body.innerHTML = "";
-							document.write(html);
+							console.log("Got the html ", html);
+							document.documentElement.innerHTML = html;
+							// document.write(html);
 						}
 					});
 
@@ -89,7 +91,7 @@ function setUpClient(requestURL) {
 	peer.on('connection', function(conn) {
 		conn.on('open',function() {
 			var data = document.documentElement.outerHTML;
-			console.log("sending html");
+			console.log("sending html ");
 			//Send data (html) to new peer
 			conn.send(data);
 			console.log("SENT");
