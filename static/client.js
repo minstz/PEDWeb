@@ -35,6 +35,8 @@ function setUpClient(requestURL) {
 				success: function(html) {
 					console.log("Got the html");
 					document.body.innerHTML = "";
+					console.log(sha256(html));
+					console.log(html.length);
 					document.write(html);
 				}
 			});
@@ -56,6 +58,8 @@ function setUpClient(requestURL) {
 
 		    //compare hash to hash supplied by server
 		    //if not equal, close connection, send error to server, and get new peer
+			console.log(data.length);
+
 		    if (hash == recievedHash) {
 			    //write data (html) to the DOM
 			    // document.write(data);

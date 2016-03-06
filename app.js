@@ -13,13 +13,12 @@ var peers = [];
 var page_hashes = {}
 
 remove_peer = function(id) {
-	var temp = [];
 	for (var i = 0; i < peers.length; i++) {
-		if (peers[i]['id'] != id) {
-			temp.push(peers[i]);
+		if (peers[i]['id'] === id) {
+			peers[i]['currentPage'] = undefined;
+			peers[i]['pageHash'] = undefined;
 		}
 	}
-	peers = temp;
 }
 
 
@@ -136,13 +135,7 @@ peerServer.on('connection', function(id) {
 peerServer.on('disconnect', function(id) { 
 	// Remove client from list
 
-	var tempPeers = [];
-	for(var p in peers) {
-		if(p['id'] != id) {
-			tempPeers.push(p);
-		}
-	}
-	peers = tempPeers;
+	remove_peer(id);
 
 });
 
