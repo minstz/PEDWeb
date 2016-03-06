@@ -14,8 +14,10 @@ var options = {
 
 peerServer = ExpressPeerServer(server, options);
 
-app.get('/', function(req, res, next) { 
+app.use('/api', peerServer);
 
+app.get('/', function(req, res, next) { 
+	// console.log("///////////////");
 
 	res.sendFile('index.html', { root : __dirname}); 
 	// sendjson = {'peer_id': 'peer_id', 'content_hash': 'abcd'};
@@ -24,12 +26,20 @@ app.get('/', function(req, res, next) {
 });
 
 app.get('/content', function(req, res, next) { 
+	// console.log("contentcontentcontentcontentcontent");
 	res.sendFile('content.html', { root : __dirname}); 
 });
 
-app.use('/api', peerServer);
+app.get('/static/*', function(req, res, next) { 
+	// console.log("staticstaticstaticstaticstaticstaticstaticstatic");
+	res.sendFile(req.url.slice(1,req.url.length), { root : __dirname}); 
+});
+
+
+
 
 app.get('/*', function(req, res, next) { 
+	console.log("ASDFGHJKL");
 	if (req.url in page_hashes) {
 		sendjson = {'peer_id': 'peer_id', 'content_hash': page_hashes[req.url]};
 		res.send(JSON.stringify(sendjson));
