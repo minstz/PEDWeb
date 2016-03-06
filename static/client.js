@@ -1,4 +1,4 @@
-$(document).ready(function() {
+function setUpClient(requestURL) {
 	
 	var peerID = "";
 	var hash = 0;
@@ -12,9 +12,9 @@ $(document).ready(function() {
 		console.log('My peer ID is: ' + id);
 
 		//Get peerID and hash from server
-		console.log('GETting /' + id + '/content_metadata' )
+		console.log('GETting /' + id + requestURL + '_metadata' )
 		$.ajax({
-			url: '/' + id + '/content_metadata',
+			url: '/' + id + requestURL + '_metadata',
 			// data: id,
 			dataType: 'json',
 			async: false,
@@ -29,11 +29,12 @@ $(document).ready(function() {
 		//We will now get the content directly from server
 		if (peerID == id || peerID == "peer_id") {
 			$.ajax({
-				url: '/' + id + '/content',
+				url: '/' + id + requestURL,
 				dataType: 'html',
 				async: false,
 				success: function(html) {
 					console.log("Got the html");
+					document.body.innerHTML = "";
 					document.write(html);
 				}
 			});
@@ -63,6 +64,17 @@ $(document).ready(function() {
 		    else {
 		    	console.log("Hashes do not match");
 
+					$.ajax({
+						url: '/error' + '/' + peerID + requestURL,
+						dataType: 'html',
+						async: false,
+						success: function(html) {
+							console.log("Got the html");
+							document.body.innerHTML = "";
+							document.write(html);
+						}
+					});
+
 		    }
 
 		  });
@@ -83,4 +95,4 @@ $(document).ready(function() {
 
 	});
 
-});
+}
