@@ -12,8 +12,9 @@ $(document).ready(function() {
 		console.log('My peer ID is: ' + id);
 
 		//Get peerID and hash from server
+		console.log('GETting /' + id + '/content_metadata' )
 		$.ajax({
-			url: '/content_metadata',
+			url: '/' + id + '/content_metadata',
 			// data: id,
 			dataType: 'json',
 			async: false,
@@ -28,7 +29,7 @@ $(document).ready(function() {
 		//We will now get the content directly from server
 		if (peerID == id || peerID == "peer_id") {
 			$.ajax({
-				url: '/content',
+				url: '/' + id + '/content',
 				dataType: 'html',
 				async: false,
 				success: function(html) {
